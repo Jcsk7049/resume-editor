@@ -17,13 +17,12 @@ export default function SettingsEditor() {
   const { settings, updateSettings, data, toggleSectionVisible } = useResumeStore();
 
   const sectionLabels: Record<string, string> = {
-    personal: '個人資訊', experience: '工作經歷', education: '學歷',
+    personal: '個人資訊', experience: '經歷', education: '學歷',
     skills: '技能', projects: '專案', certifications: '證照', languages: '語言', custom: '自訂',
   };
 
   return (
     <div className="editor-panel">
-      <div className="panel-title">外觀設定</div>
 
       {/* Template */}
       <div className="settings-group">

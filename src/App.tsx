@@ -257,7 +257,7 @@ export default function App() {
         {/* Preview workspace — centered A4 canvas */}
         <div className={`preview-workspace ${drawerOpen ? 'dimmed' : ''}`}>
           <div className="preview-edit-hint">
-            <Pencil size={12} strokeWidth={2} /> 點擊任意位置開啟編輯器
+            <Pencil size={12} strokeWidth={2} /> 點擊右側按鈕編輯區塊，拖曳 ⠿ 調整順序
           </div>
           <div className="preview-canvas-wrap" onClick={handlePreviewClick}>
             <ResumePreview ref={previewRef} onEditSection={handleEditSection} />
