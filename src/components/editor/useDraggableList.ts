@@ -2,106 +2,102 @@ import { useRef, useState, useEffect } from 'react';
 import type React from 'react';
 
 /**
- * Robust Notion-style drag-and-drop reordering.
+ * HTML5 DnD — 關鍵修復：
  *
- * Root cause of previous failures:
- *   1. Stale closures — draggingId from React state was captured at render time,
- *      so the drop handler saw the pre-drag (null) value.
- *   2. SVG pointer-events — the GripVertical icon inside the handle span was
- *      intercepting mousedown, preventing drag start.
+ * 根本原因：onDragOver 每 ~50ms 觸發一次，每次 setDragOverId/setDropPos
+ * 都會讓 React 重新渲染整個列表。React reconciler 可能在拖曳途中重建
+ * DOM element，瀏覽器因此失去對「被拖曳物件」的追蹤，整個 drag 取消。
  *
- * Fixes applied:
- *   • draggingIdRef (useRef) — always current, never stale, no re-render overhead
- *   • itemsRef (useRef) — avoids stale items array inside drop handler
- *   • dataTransfer fallback — use getData() as secondary source of truth
- *   • transparent drag image — prevents browser from rendering SVG as ghost
- *   • CSS: .card-drag-handle svg { pointer-events: none } (add to App.css)
+ * 解法：拖曳過程中完全不更新 React state。
+ * - drop 指示線 → 直接操作 CSS class（不觸發 React render）
+ * - draggingId  → useRef（不觸發 React render）
+ * - items ref   → useEffect 同步，drop 時永遠讀到最新陣列
+ * - 唯一的 setState：setDraggingId，僅在 dragStart 後用
+ *   requestAnimationFrame 延遲執行，避免干擾 drag 啟動
  */
 export function useDraggableList<T extends { id: string }>(
   items: T[],
   onReorder: (items: T[]) => void,
 ) {
-  // ── Refs (no stale closures) ──────────────────────────────────────────────
   const draggingIdRef = useRef<string | null>(null);
   const itemsRef      = useRef<T[]>(items);
   useEffect(() => { itemsRef.current = items; }, [items]);
 
-  // ── UI state (for CSS classes only) ──────────────────────────────────────
+  // 僅用於 is-dragging CSS class；拖曳期間不頻繁更新
   const [draggingId, setDraggingId] = useState<string | null>(null);
-  const [dragOverId, setDragOverId] = useState<string | null>(null);
-  const [dropPos,    setDropPos]    = useState<'top' | 'bottom'>('bottom');
 
-  // ── Reset helper ──────────────────────────────────────────────────────────
-  const reset = () => {
-    draggingIdRef.current = null;
-    setDraggingId(null);
-    setDragOverId(null);
+  // ── 工具：直接清除所有 drop 指示 CSS class ───────────────────────────────
+  const clearDropIndicators = () => {
+    document.querySelectorAll<HTMLElement>('.card-item').forEach(el => {
+      el.classList.remove('drop-top', 'drop-bottom');
+    });
   };
 
-  // ── Drag source: HANDLE only ──────────────────────────────────────────────
+  const reset = () => {
+    clearDropIndicators();
+    draggingIdRef.current = null;
+    setDraggingId(null);
+  };
+
+  // ── Handle：拖曳來源 ──────────────────────────────────────────────────────
 
   const handleDragStart = (id: string) => (e: React.DragEvent) => {
     draggingIdRef.current = id;
-    setDraggingId(id);
     e.dataTransfer.effectAllowed = 'move';
-    // Store id in two formats for maximum browser compatibility
     e.dataTransfer.setData('text/plain', id);
-    try { e.dataTransfer.setData('application/x-item-id', id); } catch { /* Safari */ }
 
-    // Replace default browser ghost (which renders the whole element)
-    // with an invisible 1×1 element so we don't see a drag image
+    // 透明 drag ghost — 避免瀏覽器截取 SVG 作為拖曳圖像
     const ghost = document.createElement('span');
-    ghost.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;width:1px;height:1px';
+    ghost.style.cssText = 'position:fixed;top:-9999px;width:1px;height:1px;opacity:0';
     document.body.appendChild(ghost);
     e.dataTransfer.setDragImage(ghost, 0, 0);
-    requestAnimationFrame(() => document.body.removeChild(ghost));
+    requestAnimationFrame(() => {
+      document.body.removeChild(ghost);
+      // 延遲設 state 避免在 drag 初始幀觸發 re-render
+      setDraggingId(id);
+    });
   };
 
   const handleDragEnd = () => reset();
 
-  // ── Drop target: CARD ────────────────────────────────────────────────────
+  // ── Card：放置目標 ────────────────────────────────────────────────────────
 
   const handleDragOver = (id: string) => (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
 
-    const fromId = draggingIdRef.current;
-    if (!fromId || fromId === id) return;
+    if (!draggingIdRef.current || draggingIdRef.current === id) return;
 
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const pos: 'top' | 'bottom' = e.clientY < rect.top + rect.height / 2 ? 'top' : 'bottom';
+    const card = e.currentTarget as HTMLElement;
+    const rect  = card.getBoundingClientRect();
+    const isTop = e.clientY < rect.top + rect.height / 2;
 
-    // Avoid redundant state updates during rapid mousemove
-    if (dragOverId !== id || dropPos !== pos) {
-      setDragOverId(id);
-      setDropPos(pos);
-    }
+    // ★ 直接操作 DOM class，完全不呼叫 setState → 不觸發 React re-render
+    clearDropIndicators();
+    card.classList.add(isTop ? 'drop-top' : 'drop-bottom');
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     const related = e.relatedTarget as Node | null;
     if (!(e.currentTarget as HTMLElement).contains(related)) {
-      setDragOverId(null);
+      (e.currentTarget as HTMLElement).classList.remove('drop-top', 'drop-bottom');
     }
   };
 
   const handleDrop = (id: string) => (e: React.DragEvent) => {
     e.preventDefault();
 
-    // Read from ref first (most reliable), then dataTransfer fallback
     const fromId =
       draggingIdRef.current ||
-      (() => { try { return e.dataTransfer.getData('application/x-item-id'); } catch { return ''; } })() ||
       e.dataTransfer.getData('text/plain');
 
     if (!fromId || fromId === id) { reset(); return; }
 
-    // Use itemsRef so we always operate on the latest array
-    const current = itemsRef.current;
-    const fromIdx = current.findIndex(i => i.id === fromId);
+    const current  = itemsRef.current;
+    const fromIdx  = current.findIndex(i => i.id === fromId);
     if (fromIdx === -1) { reset(); return; }
 
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const rect      = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const dropAfter = e.clientY >= rect.top + rect.height / 2;
 
     const next = [...current];
@@ -127,9 +123,9 @@ export function useDraggableList<T extends { id: string }>(
     onDragEnd:   handleDragEnd,
   });
 
-  const isBeingDragged    = (id: string) => id === draggingId;
-  const getDropIndicator  = (id: string): 'top' | 'bottom' | null =>
-    dragOverId === id && draggingId !== id ? dropPos : null;
+  const isBeingDragged   = (id: string) => id === draggingId;
+  // drop 指示現在完全由 CSS class 控制，不需回傳 indicator
+  const getDropIndicator = (_id: string): 'top' | 'bottom' | null => null;
 
   return { getCardProps, getHandleProps, isBeingDragged, getDropIndicator };
 }

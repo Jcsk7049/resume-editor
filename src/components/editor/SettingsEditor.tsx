@@ -11,14 +11,77 @@ const TEMPLATES: { id: TemplateId; name: string; desc: string; tag?: string }[] 
   { id: 'swiss',     name: '瑞士式',  desc: '嚴格格線極簡',    tag: 'New' },
 ];
 
-// Preset palettes: each entry defines the full accent colour set
-const COLOR_PRESETS = [
-  { name: '海洋藍', primary: '#2563eb', secondary: '#1e40af', accent: '#dbeafe' },
-  { name: '翠綠',   primary: '#059669', secondary: '#047857', accent: '#d1fae5' },
-  { name: '典雅紫', primary: '#7c3aed', secondary: '#6d28d9', accent: '#ede9fe' },
-  { name: '玫瑰紅', primary: '#e11d48', secondary: '#be123c', accent: '#fce7f3' },
-  { name: '琥珀金', primary: '#d97706', secondary: '#b45309', accent: '#fef3c7' },
-  { name: '石板灰', primary: '#475569', secondary: '#334155', accent: '#e2e8f0' },
+interface Theme {
+  id: string;
+  name: string;
+  desc: string;
+  swatch: string[];   // 2-3 顏色作為預覽漸層
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    text: string;
+    background: string;
+  };
+}
+
+const THEMES: Theme[] = [
+  {
+    id: 'ocean',
+    name: '🌊 海洋',
+    desc: '深邃清澈',
+    swatch: ['#0284c7', '#0ea5e9', '#e0f2fe'],
+    colors: { primary: '#0284c7', secondary: '#0369a1', accent: '#e0f2fe', text: '#0c4a6e', background: '#ffffff' },
+  },
+  {
+    id: 'space',
+    name: '🚀 太空',
+    desc: '神秘深邃',
+    swatch: ['#6d28d9', '#8b5cf6', '#ede9fe'],
+    colors: { primary: '#6d28d9', secondary: '#5b21b6', accent: '#ede9fe', text: '#2e1065', background: '#ffffff' },
+  },
+  {
+    id: 'forest',
+    name: '🌿 森林',
+    desc: '自然清新',
+    swatch: ['#15803d', '#22c55e', '#dcfce7'],
+    colors: { primary: '#15803d', secondary: '#166534', accent: '#dcfce7', text: '#14532d', background: '#ffffff' },
+  },
+  {
+    id: 'sunset',
+    name: '🌅 夕陽',
+    desc: '溫暖活力',
+    swatch: ['#ea580c', '#f97316', '#ffedd5'],
+    colors: { primary: '#ea580c', secondary: '#c2410c', accent: '#ffedd5', text: '#7c2d12', background: '#ffffff' },
+  },
+  {
+    id: 'sakura',
+    name: '🌸 櫻花',
+    desc: '優雅柔美',
+    swatch: ['#db2777', '#ec4899', '#fce7f3'],
+    colors: { primary: '#db2777', secondary: '#be185d', accent: '#fce7f3', text: '#831843', background: '#ffffff' },
+  },
+  {
+    id: 'glacier',
+    name: '🧊 冰川',
+    desc: '冷峻清冽',
+    swatch: ['#0e7490', '#06b6d4', '#cffafe'],
+    colors: { primary: '#0e7490', secondary: '#0c5a6c', accent: '#cffafe', text: '#164e63', background: '#ffffff' },
+  },
+  {
+    id: 'desert',
+    name: '🏜️ 沙漠',
+    desc: '沉穩大氣',
+    swatch: ['#b45309', '#d97706', '#fef3c7'],
+    colors: { primary: '#b45309', secondary: '#92400e', accent: '#fef3c7', text: '#78350f', background: '#ffffff' },
+  },
+  {
+    id: 'graphite',
+    name: '🪨 石墨',
+    desc: '低調專業',
+    swatch: ['#374151', '#6b7280', '#f3f4f6'],
+    colors: { primary: '#374151', secondary: '#1f2937', accent: '#f3f4f6', text: '#111827', background: '#ffffff' },
+  },
 ];
 
 export default function SettingsEditor() {
@@ -30,33 +93,7 @@ export default function SettingsEditor() {
     languages: '語言', custom: '自訂',
   };
 
-  const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
-    updateSettings({
-      colors: {
-        primary:    preset.primary,
-        secondary:  preset.secondary,
-        accent:     preset.accent,
-        text:       '#1f2937',
-        background: '#ffffff',
-      },
-    });
-  };
-
-  // Custom hex → derive a simple light accent automatically
-  const applyCustomColor = (hex: string) => {
-    updateSettings({
-      colors: {
-        primary:    hex,
-        secondary:  hex,
-        accent:     hex + '22',   // low-opacity tint as background accent
-        text:       '#1f2937',
-        background: '#ffffff',
-      },
-    });
-  };
-
-  const currentPrimary = settings.colors.primary;
-  const isPreset = COLOR_PRESETS.some(p => p.primary === currentPrimary);
+  const currentTheme = THEMES.find(t => t.colors.primary === settings.colors.primary);
 
   return (
     <div className="editor-panel">
@@ -81,45 +118,39 @@ export default function SettingsEditor() {
         </div>
       </div>
 
-      {/* ── Accent colour ── */}
+      {/* ── Theme ── */}
       <div className="settings-group">
-        <div className="settings-group-title">主題顏色</div>
-
-        {/* Preset swatches */}
-        <div className="color-swatches">
-          {COLOR_PRESETS.map((preset) => (
-            <button
-              key={preset.primary}
-              className={`color-swatch-btn ${currentPrimary === preset.primary ? 'active' : ''}`}
-              style={{ '--swatch': preset.primary } as React.CSSProperties}
-              onClick={() => applyPreset(preset)}
-              title={preset.name}
-            />
-          ))}
-
-          {/* Custom colour picker */}
-          <label
-            className={`color-swatch-btn color-swatch-custom ${!isPreset ? 'active' : ''}`}
-            title="自訂顏色"
-          >
-            <input
-              type="color"
-              value={currentPrimary}
-              onChange={(e) => applyCustomColor(e.target.value)}
-              style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none' }}
-            />
-            <span className="color-swatch-plus">＋</span>
-          </label>
+        <div className="settings-group-title">配色風格</div>
+        <div className="theme-grid">
+          {THEMES.map((theme) => {
+            const active = settings.colors.primary === theme.colors.primary;
+            return (
+              <button
+                key={theme.id}
+                className={`theme-card ${active ? 'active' : ''}`}
+                onClick={() => updateSettings({ colors: theme.colors })}
+                title={theme.desc}
+              >
+                {/* 漸層色條 */}
+                <div
+                  className="theme-swatch"
+                  style={{
+                    background: `linear-gradient(135deg, ${theme.swatch[0]} 0%, ${theme.swatch[1]} 60%, ${theme.swatch[2]} 100%)`,
+                  }}
+                />
+                <div className="theme-info">
+                  <div className="theme-name">{theme.name}</div>
+                  <div className="theme-desc">{theme.desc}</div>
+                </div>
+              </button>
+            );
+          })}
         </div>
-
-        {/* Current colour preview */}
-        <div className="color-current">
-          <span
-            className="color-current-dot"
-            style={{ background: currentPrimary }}
-          />
-          <span className="color-current-hex">{currentPrimary.toUpperCase()}</span>
-        </div>
+        {currentTheme && (
+          <div className="theme-active-label">
+            目前：<strong>{currentTheme.name}</strong>
+          </div>
+        )}
       </div>
 
       {/* ── Typography ── */}
