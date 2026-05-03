@@ -134,8 +134,8 @@ export default function AuthBar({ onShowSetup }: Props) {
   // ── Not configured ──────────────────────────────────────
   if (!isFirebaseConfigured) {
     return (
-      <button className="auth-setup-btn" onClick={onShowSetup} title="設定 Firebase 以啟用雲端儲存">
-        <Cloud size={13} strokeWidth={1.75} /> 啟用雲端儲存
+      <button className="auth-setup-btn" onClick={onShowSetup} title="啟用雲端儲存">
+        <Cloud size={14} strokeWidth={1.75} />
       </button>
     );
   }

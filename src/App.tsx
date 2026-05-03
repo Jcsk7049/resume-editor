@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   User, Briefcase, GraduationCap, Zap, FolderOpen,
   Award, Globe, Palette, FileText, Sparkles, Upload,
-  Download, Pencil, X, Settings, Database, Eye,
+  Download, Pencil, X, Settings, Database, Eye, Loader2,
 } from 'lucide-react';
 import { useResumeStore } from './store/resumeStore';
 import { optimizeLayout } from './store/optimizeLayout';
@@ -179,7 +179,6 @@ export default function App() {
         <span className="topbar-resume-name">{data.personal.name || '未命名履歷'}</span>
         <div className="topbar-actions">
           <AuthBar onShowSetup={() => setShowFirebaseSetup(true)} />
-          <div className="topbar-divider" />
           <button className="topbar-btn" onClick={() => setShowImport(true)}>
             <Upload size={14} strokeWidth={2} /> 掃描匯入
           </button>
@@ -188,7 +187,10 @@ export default function App() {
             onClick={handleOptimize}
             disabled={optimizing}
           >
-            <Sparkles size={14} strokeWidth={2} />
+            {optimizing
+              ? <Loader2 size={14} strokeWidth={2} className="icon-spin" />
+              : <Sparkles size={14} strokeWidth={2} />
+            }
             {optimizing ? '分析中…' : '一鍵最佳化'}
           </button>
         </div>

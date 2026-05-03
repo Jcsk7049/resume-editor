@@ -180,7 +180,8 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 13px;
+  padding: 0 13px;
+  height: 36px;
   border-radius: 4px;
   border: 1px solid var(--border);
   background: #ffffff;
@@ -875,7 +876,8 @@ input[type="checkbox"] {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 14px;
+  padding: 0 16px;
+  height: 36px;
   border: none;
   border-radius: 4px;
   background: var(--accent);
@@ -891,6 +893,16 @@ input[type="checkbox"] {
 .btn-optimize:hover { background: var(--accent-hover); }
 .btn-optimize:active { transform: scale(0.97); }
 .btn-optimize.loading { opacity: 0.7; cursor: wait; }
+
+/* Spinner for loading states */
+@keyframes spin-icon {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.icon-spin {
+  display: inline-block;
+  animation: spin-icon 0.75s linear infinite;
+}
 
 .btn-primary {
   padding: 5px 13px;
@@ -910,8 +922,8 @@ input[type="checkbox"] {
 .preview-scroll {
   flex: 1;
   overflow: auto;
-  overflow-x: hidden; /* hide horizontal scroll; let scale handle width */
-  padding: 24px;
+  overflow-x: auto; /* section-float buttons need right-side space */
+  padding: 24px 140px 24px 24px; /* right padding reserves room for float buttons */
   display: flex;
   justify-content: center;
   background: #EBEBEB;
@@ -1154,18 +1166,16 @@ input[type="checkbox"] {
 .auth-setup-btn {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 13px;
-  border-radius: 4px;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 500;
   cursor: pointer;
   transition: all var(--transition);
-  font-family: inherit;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 .auth-setup-btn:hover { border-color: var(--slate-400); color: var(--text); background: var(--slate-50); }
 
@@ -1638,18 +1648,11 @@ input[type="checkbox"] {
   color: var(--text-muted);
 }
 .fnav-item.active {
-  background: var(--slate-100);
-  color: var(--slate-900);
+  background: var(--accent);
+  color: #ffffff;
 }
 .fnav-item.active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 2px;
-  background: var(--slate-900);
-  border-radius: 0 2px 2px 0;
+  display: none;
 }
 
 .fnav-icon { line-height: 1; display: flex; align-items: center; justify-content: center; }
@@ -1765,7 +1768,7 @@ input[type="checkbox"] {
   pointer-events: none;
 }
 
-/* Edit hint — sticky, appears on hover */
+/* Edit hint — permanently visible, very subtle */
 .preview-edit-hint {
   position: sticky;
   top: 14px;
@@ -1783,12 +1786,8 @@ input[type="checkbox"] {
   font-size: 11px;
   color: var(--text-muted);
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 260ms ease;
+  opacity: 0.45;
   white-space: nowrap;
-}
-.preview-workspace:not(.dimmed):hover .preview-edit-hint {
-  opacity: 1;
 }
 
 /* Canvas wrap — adds top padding for breathing room */
@@ -1926,8 +1925,8 @@ input[type="checkbox"] {
 }
 
 .section-float-handle {
-  width: 22px;
-  height: 28px;
+  width: 28px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1951,23 +1950,21 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
+  padding: 0 12px;
+  height: 32px;
   background: var(--text);
   color: #ffffff;
   border: none;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   font-family: inherit;
   white-space: nowrap;
-  transition: background var(--transition), transform var(--transition);
+  transition: background var(--transition);
 }
-.section-float-edit:hover {
-  background: #3d3d3d;
-  transform: scale(1.03);
-}
+.section-float-edit:hover { background: #3d3d3d; }
 
 /* Drop indicator — horizontal line showing where section will land */
 .section-drop-line {
