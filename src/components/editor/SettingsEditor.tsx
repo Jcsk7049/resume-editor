@@ -25,62 +25,66 @@ interface Theme {
   };
 }
 
+// 文字顏色固定：黑色 #1f2937，不隨主題改變
+const TEXT_DARK = '#1f2937';
+const BG_WHITE  = '#ffffff';
+
 const THEMES: Theme[] = [
   {
     id: 'ocean',
     name: '🌊 海洋',
     desc: '深邃清澈',
     swatch: ['#0284c7', '#0ea5e9', '#e0f2fe'],
-    colors: { primary: '#0284c7', secondary: '#0369a1', accent: '#e0f2fe', text: '#0c4a6e', background: '#ffffff' },
+    colors: { primary: '#0284c7', secondary: '#0369a1', accent: '#e0f2fe', text: TEXT_DARK, background: BG_WHITE },
   },
   {
     id: 'space',
     name: '🚀 太空',
     desc: '神秘深邃',
     swatch: ['#6d28d9', '#8b5cf6', '#ede9fe'],
-    colors: { primary: '#6d28d9', secondary: '#5b21b6', accent: '#ede9fe', text: '#2e1065', background: '#ffffff' },
+    colors: { primary: '#6d28d9', secondary: '#5b21b6', accent: '#ede9fe', text: TEXT_DARK, background: BG_WHITE },
   },
   {
     id: 'forest',
     name: '🌿 森林',
     desc: '自然清新',
     swatch: ['#15803d', '#22c55e', '#dcfce7'],
-    colors: { primary: '#15803d', secondary: '#166534', accent: '#dcfce7', text: '#14532d', background: '#ffffff' },
+    colors: { primary: '#15803d', secondary: '#166534', accent: '#dcfce7', text: TEXT_DARK, background: BG_WHITE },
   },
   {
     id: 'sunset',
     name: '🌅 夕陽',
     desc: '溫暖活力',
     swatch: ['#ea580c', '#f97316', '#ffedd5'],
-    colors: { primary: '#ea580c', secondary: '#c2410c', accent: '#ffedd5', text: '#7c2d12', background: '#ffffff' },
+    colors: { primary: '#ea580c', secondary: '#c2410c', accent: '#ffedd5', text: TEXT_DARK, background: BG_WHITE },
   },
   {
     id: 'sakura',
     name: '🌸 櫻花',
     desc: '優雅柔美',
     swatch: ['#db2777', '#ec4899', '#fce7f3'],
-    colors: { primary: '#db2777', secondary: '#be185d', accent: '#fce7f3', text: '#831843', background: '#ffffff' },
+    colors: { primary: '#db2777', secondary: '#be185d', accent: '#fce7f3', text: TEXT_DARK, background: BG_WHITE },
   },
   {
     id: 'glacier',
     name: '🧊 冰川',
     desc: '冷峻清冽',
     swatch: ['#0e7490', '#06b6d4', '#cffafe'],
-    colors: { primary: '#0e7490', secondary: '#0c5a6c', accent: '#cffafe', text: '#164e63', background: '#ffffff' },
+    colors: { primary: '#0e7490', secondary: '#0c5a6c', accent: '#cffafe', text: TEXT_DARK, background: BG_WHITE },
   },
   {
     id: 'desert',
     name: '🏜️ 沙漠',
     desc: '沉穩大氣',
     swatch: ['#b45309', '#d97706', '#fef3c7'],
-    colors: { primary: '#b45309', secondary: '#92400e', accent: '#fef3c7', text: '#78350f', background: '#ffffff' },
+    colors: { primary: '#b45309', secondary: '#92400e', accent: '#fef3c7', text: TEXT_DARK, background: BG_WHITE },
   },
   {
     id: 'graphite',
     name: '🪨 石墨',
     desc: '低調專業',
     swatch: ['#374151', '#6b7280', '#f3f4f6'],
-    colors: { primary: '#374151', secondary: '#1f2937', accent: '#f3f4f6', text: '#111827', background: '#ffffff' },
+    colors: { primary: '#374151', secondary: '#1f2937', accent: '#f3f4f6', text: TEXT_DARK, background: BG_WHITE },
   },
 ];
 

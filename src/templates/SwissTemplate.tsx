@@ -118,7 +118,7 @@ export default function SwissTemplate({ data, settings }: Props) {
     }}>
 
       {/* ── Name block ── */}
-      <div data-section="personal" style={{ marginBottom: fs * 2.8, paddingBottom: fs * 1.4, borderBottom: `2px solid #111827` }}>
+      <div data-section="personal" style={{ marginBottom: fs * 2.8, paddingBottom: fs * 1.4, borderBottom: `2px solid ${accent}` }}>
         <Row>
           <Label />
           <Content>

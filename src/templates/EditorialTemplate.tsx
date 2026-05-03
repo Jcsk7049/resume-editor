@@ -47,9 +47,10 @@ export default function EditorialTemplate({ data, settings }: Props) {
   const sz = scale(fs);
   const c = settings.colors;
 
-  const ink  = '#111111';
-  const meta = '#5f5f5f';
-  const rule = '#d8d8d8';
+  const ink    = '#111111';
+  const meta   = '#5f5f5f';
+  const rule   = '#d8d8d8';
+  const accent = c.primary;   // 主題色
 
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div style={{ marginBottom: fs * 2.2 }}>
@@ -61,7 +62,7 @@ export default function EditorialTemplate({ data, settings }: Props) {
         color: ink,
         marginBottom: fs * 0.8,
         paddingBottom: fs * 0.45,
-        borderBottom: `1px solid ${rule}`,
+        borderBottom: `2px solid ${accent}`,   // ← 段落標題底線套用主題色
       }}>
         {title}
       </div>
@@ -89,7 +90,7 @@ export default function EditorialTemplate({ data, settings }: Props) {
     }}>
 
       {/* ── Header ── */}
-      <div data-section="personal" style={{ marginBottom: fs * 2.6, paddingBottom: fs * 1.4, borderBottom: `2px solid ${ink}` }}>
+      <div data-section="personal" style={{ marginBottom: fs * 2.6, paddingBottom: fs * 1.4, borderBottom: `2px solid ${accent}` }}>
         <div style={{
           fontSize: sz.name,
           fontWeight: 700,

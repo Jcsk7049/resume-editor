@@ -61,7 +61,7 @@ export default function DevTemplate({ data, settings }: Props) {
     borderMuted: '#e4e8ec',
     text: '#1f2328',
     meta: '#636c76',
-    accent: '#0969da',
+    accent: settings.colors.primary,   // ← 使用使用者設定的主題色
     success: '#1a7f37',
   };
 
