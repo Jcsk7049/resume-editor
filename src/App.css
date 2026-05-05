@@ -120,6 +120,7 @@ body {
   gap: 12px;
   flex-shrink: 0;
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);  /* H3: 給 topbar 層次感 */
   position: relative;
   z-index: 20;
   box-shadow: none;
@@ -146,11 +147,11 @@ body {
   font-family: inherit;
 }
 .brand-tag {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: transparent;
-  border: 1px solid var(--border);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
   border-radius: 4px;
   padding: 1px 6px;
   letter-spacing: 0.05em;
@@ -429,9 +430,9 @@ body {
   padding-bottom: 20px;   /* breathing room between rows */
 }
 .field-group label {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text-faint);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding-bottom: 2px;
@@ -448,10 +449,10 @@ input[type="month"],
 select,
 textarea {
   border: none;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1.5px solid var(--border);
   border-radius: 0;
-  padding: 5px 0;
-  font-size: 13px;
+  padding: 6px 0;
+  font-size: max(16px, 13px);    /* C2: ≥16px 防止 iOS 縮放 */
   color: var(--text);
   background: transparent;
   font-family: inherit;
@@ -468,6 +469,15 @@ textarea:focus {
   outline: none;
   border-bottom-color: var(--accent);
   box-shadow: none;
+}
+/* C6: Focus ring for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 input:hover:not(:focus),
 select:hover:not(:focus),
@@ -572,9 +582,9 @@ input[type="checkbox"] {
   gap: 12px;
 }
 .card-number {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.06em;
 }
@@ -598,16 +608,18 @@ input[type="checkbox"] {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 14px;
+  padding: 0 14px;
+  height: 36px;              /* C4: 最小觸控目標 */
   background: var(--accent);
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   transition: background var(--transition);
   font-family: inherit;
+  flex-shrink: 0;
 }
 .btn-add:hover { background: var(--accent-hover); }
 
@@ -1593,7 +1605,7 @@ input[type="checkbox"] {
   display: flex;
   overflow: hidden;
   position: relative;
-  background: #FAFAFA;
+  background: #F1F3F5;    /* M3: 稍深背景讓 A4 白紙有浮起感 */
 }
 
 /* ── Floating Navigation Strip ── */
@@ -1766,7 +1778,7 @@ input[type="checkbox"] {
   pointer-events: none;
 }
 
-/* Edit hint — permanently visible, very subtle */
+/* Edit hint — appears on preview hover (H5: not permanently showing) */
 .preview-edit-hint {
   position: sticky;
   top: 14px;
@@ -1784,9 +1796,11 @@ input[type="checkbox"] {
   font-size: 11px;
   color: var(--text-muted);
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0;
+  transition: opacity 200ms ease;
   white-space: nowrap;
 }
+.preview-workspace:hover .preview-edit-hint { opacity: 1; }
 
 /* Canvas wrap — adds top padding for breathing room */
 .preview-canvas-wrap {
@@ -1905,7 +1919,7 @@ input[type="checkbox"] {
   /* marginBottom is set inline to compensate for layout height */
 }
 
-/* Floating section edit button (inside the scaled preview-page) */
+/* Floating section edit button — visible on preview-page hover */
 .section-float {
   position: absolute;
   right: 0;
@@ -1913,10 +1927,12 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 4px;
-  animation: sectionFloatIn 150ms ease-out;
   pointer-events: auto;
   z-index: 10;
+  opacity: 0;
+  transition: opacity 150ms ease;
 }
+.preview-page:hover .section-float { opacity: 1; }
 @keyframes sectionFloatIn {
   from { opacity: 0; transform: translateX(calc(100% + 4px)); }
   to   { opacity: 1; transform: translateX(calc(100% + 10px)); }
