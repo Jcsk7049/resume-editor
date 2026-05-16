@@ -242,7 +242,7 @@ export default function App() {
               {activeNav && <activeNav.icon size={16} strokeWidth={1.75} />}
               <span>{activeNav?.label}</span>
             </div>
-            <button className="drawer-close" onClick={() => setDrawerOpen(false)}>
+            <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="關閉編輯面板">
               <X size={14} strokeWidth={2} />
             </button>
           </div>

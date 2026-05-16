@@ -104,9 +104,9 @@ const defaultSettings: ResumeSettings = {
   fontFamily: 'Noto Sans TC',
   colorTheme: 'blue',
   colors: {
-    primary: '#2563eb',
-    secondary: '#1e40af',
-    accent: '#dbeafe',
+    primary: '#0284c7',   // 海洋藍（對應 THEMES[0]，確保預設有 active 狀態）
+    secondary: '#0369a1',
+    accent: '#e0f2fe',
     text: '#1f2937',
     background: '#ffffff',
   },
@@ -143,22 +143,18 @@ interface ResumeStore {
   addExperience: () => void;
   updateExperience: (id: string, item: Partial<ExperienceItem>) => void;
   removeExperience: (id: string) => void;
-  reorderExperience: (items: ExperienceItem[]) => void;
   addEducation: () => void;
   updateEducation: (id: string, item: Partial<EducationItem>) => void;
   removeEducation: (id: string) => void;
-  reorderEducation: (items: EducationItem[]) => void;
   addSkillCategory: () => void;
   updateSkillCategory: (id: string, item: Partial<SkillCategory>) => void;
   removeSkillCategory: (id: string) => void;
   addProject: () => void;
   updateProject: (id: string, item: Partial<ProjectItem>) => void;
   removeProject: (id: string) => void;
-  reorderProjects: (items: ProjectItem[]) => void;
   addCertification: () => void;
   updateCertification: (id: string, item: Partial<CertificationItem>) => void;
   removeCertification: (id: string) => void;
-  reorderCertifications: (items: CertificationItem[]) => void;
   addLanguage: () => void;
   updateLanguage: (id: string, item: Partial<LanguageItem>) => void;
   removeLanguage: (id: string) => void;
@@ -201,8 +197,7 @@ export const useResumeStore = create<ResumeStore>()(
         set((s) => ({ data: { ...s.data, experience: s.data.experience.map((e) => (e.id === id ? { ...e, ...item } : e)) } })),
       removeExperience: (id) =>
         set((s) => ({ data: { ...s.data, experience: s.data.experience.filter((e) => e.id !== id) } })),
-      reorderExperience: (items) =>
-        set((s) => ({ data: { ...s.data, experience: items } })),
+
 
       addEducation: () =>
         set((s) => ({
@@ -218,8 +213,7 @@ export const useResumeStore = create<ResumeStore>()(
         set((s) => ({ data: { ...s.data, education: s.data.education.map((e) => (e.id === id ? { ...e, ...item } : e)) } })),
       removeEducation: (id) =>
         set((s) => ({ data: { ...s.data, education: s.data.education.filter((e) => e.id !== id) } })),
-      reorderEducation: (items) =>
-        set((s) => ({ data: { ...s.data, education: items } })),
+
 
       addSkillCategory: () =>
         set((s) => ({
@@ -244,8 +238,7 @@ export const useResumeStore = create<ResumeStore>()(
         set((s) => ({ data: { ...s.data, projects: s.data.projects.map((e) => (e.id === id ? { ...e, ...item } : e)) } })),
       removeProject: (id) =>
         set((s) => ({ data: { ...s.data, projects: s.data.projects.filter((e) => e.id !== id) } })),
-      reorderProjects: (items) =>
-        set((s) => ({ data: { ...s.data, projects: items } })),
+
 
       addCertification: () =>
         set((s) => ({
@@ -258,8 +251,7 @@ export const useResumeStore = create<ResumeStore>()(
         set((s) => ({ data: { ...s.data, certifications: s.data.certifications.map((e) => (e.id === id ? { ...e, ...item } : e)) } })),
       removeCertification: (id) =>
         set((s) => ({ data: { ...s.data, certifications: s.data.certifications.filter((e) => e.id !== id) } })),
-      reorderCertifications: (items) =>
-        set((s) => ({ data: { ...s.data, certifications: items } })),
+
 
       addLanguage: () =>
         set((s) => ({

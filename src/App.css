@@ -571,11 +571,6 @@ input[type="checkbox"] {
   align-items: center;
   margin-bottom: 10px;
 }
-.card-item-left {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
 .card-item-inline {
   flex-direction: row;
   align-items: flex-start;
@@ -715,9 +710,9 @@ input[type="checkbox"] {
    ═══════════════════════════════════════════ */
 .settings-group { display: flex; flex-direction: column; gap: 12px; }
 .settings-group-title {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--text-faint);
+  color: var(--text-muted);   /* 修：提升對比度 2.9→4.6:1 */
   text-transform: uppercase;
   letter-spacing: 0.09em;
 }
@@ -784,7 +779,7 @@ input[type="checkbox"] {
 .theme-card.active {
   border-color: var(--accent);
   background: var(--slate-50);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);  /* 修：移除 color-mix() 相容性風險 */
 }
 .theme-swatch {
   width: 32px;
@@ -865,7 +860,11 @@ input[type="checkbox"] {
 .preview-actions { display: flex; gap: 6px; align-items: center; }
 
 .btn-toolbar {
-  padding: 5px 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 11px;
+  height: 32px;              /* 修 btn-toolbar 高度不足 (28→32px) */
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
@@ -1829,7 +1828,7 @@ input[type="checkbox"] {
 .preview-canvas-wrap .preview-scroll {
   flex: none;
   overflow: visible;
-  padding: 0 8px;
+  padding: 0 120px 0 8px;    /* 修：右側保留空間給 section-float 按鈕 */
   background: transparent;
 }
 .preview-canvas-wrap .preview-page {
